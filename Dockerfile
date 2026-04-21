@@ -26,8 +26,8 @@ CMD ["/app/vendor/phpunit/phpunit/phpunit"]
 
 FROM ospos AS ospos_dev
 
-ARG USERID
-ARG GROUPID
+ARG USERID=1000
+ARG GROUPID=1000
 
 RUN echo "Adding user uid $USERID with gid $GROUPID"
 RUN ( addgroup --gid $GROUPID ospos || true ) && ( adduser --uid $USERID --gid $GROUPID ospos )
