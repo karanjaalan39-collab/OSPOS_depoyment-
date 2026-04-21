@@ -1,0 +1,19 @@
+our Issue Diagnosed & Fixed
+The “infinity generated receipt” problem comes from two critical bugs in postComplete():
+
+Broken branching logic (the if (invoice) elseif (work_order) elseif (quote) else structure is corrupted in your code).
+For sale_invoice mode the save never runs properly (it falls through).
+For sale_work_order with price_work_orders = 1 it executes TWO saves + TWO view echoes in the same request (receipt + work_order view).
+This creates duplicate output → printer spools the same receipt forever or the browser loops.
+
+No single-print + auto-return logic.
+Real supermarket POS (e.g. NCR, Toshiba, or any thermal printer setup) sends exactly one receipt per transaction and the printer cuts automatically. Your current code either:
+Leaves the browser on the receipt page (user can refresh → reprint), or
+Has no window.print() + redirect, so the page stays loaded and the print dialog can be triggered again.
+
+
+Real-world supermarket behaviour:
+
+One transaction → one ESC/POS job (or one HTML print job).
+Printer prints receipt + automatic cut (hardware command or driver setting).
+POS screen immediately ready for next customer.
